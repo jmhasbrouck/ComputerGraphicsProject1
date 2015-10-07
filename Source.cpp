@@ -192,16 +192,7 @@ void DisplayFunc()
 	glPopMatrix();
 
 	glPushMatrix();
-	string welcome = "Welcome to Project 1!!";
-	string arrowKeys = "Use the arrow keys to navigate around the graphic.";
-	string zoom = "Use Page UP and Page Down to zoom in or out.";
-	string wireFrame = "Use W to enter and exit wireframe mode.";
-	string quit = "Use ESC or X to quit the program.";
-	instructions.DrawIt(welcome.data(), welcome.size(), 0, 13);
-	instructions.DrawIt(arrowKeys.data(), arrowKeys.length(), 0, 10);
-	instructions.DrawIt(wireFrame.data(), wireFrame.length(), 0, 7);
-	instructions.DrawIt(zoom.data(), zoom.length(), 0, 4);
-	instructions.DrawIt(quit.data(), arrowKeys.length(), 0, 1);
+	instructions.DrawPanel();
 	glPopMatrix();
 
 	glutSwapBuffers();

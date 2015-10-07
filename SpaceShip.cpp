@@ -14,8 +14,8 @@ SpaceShip::~SpaceShip() {
 
 void SpaceShip::drawSquad() {
 
-	double z = -1.75;
-	double x = -1.75;
+	double z = -1.5;
+	double x = -1.5;
 
 	//Here, we will use a for loop to create the array of ships
 	vector<SpaceShip> theSquad;

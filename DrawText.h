@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GL/freeglut.h"
+#include <string>
 
 using namespace std;
 
@@ -9,9 +10,5 @@ public:
 	DrawTexts();
 	
 	void DrawIt(const char *text, int length, int x, int y);
-
-
-private:
-
-
+	void DrawPanel();
 };
