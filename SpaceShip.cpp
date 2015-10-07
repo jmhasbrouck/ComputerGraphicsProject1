@@ -11,18 +11,30 @@ SpaceShip::SpaceShip() {
 SpaceShip::~SpaceShip() {
 	delete[] displayLists;
 }
-vector<SpaceShip> SpaceShip::drawSquad() {
+
+void SpaceShip::drawSquad() {
+
+	double z=-1.5;
+	double x = -1.5;
+	
 	//Here, we will use a for loop to create the array of ships
 	vector<SpaceShip> theSquad;
 	for (int a = 0; a < 4; a++) {
-		glTranslated(1, 0, 0);
-		drawShip();
+		x = -1.5;
+		for (int i = 0; i < 4; i++) {
+			glPushMatrix();
+			glTranslated(x, 0, z);
+			glScaled(.5, .5, .5);
+			drawShip(0,0,0);
+			glPopMatrix();
+			x++;
+		}
+		z++;
 	}
-	return theSquad;
 
 }
 
-void SpaceShip::drawShip() {
+void SpaceShip::drawShip(double x, double y, double z) {
 
 	//LISTS TO REUSE SHAPES
 	if (weAreInDisplayFuncNumberOne)
@@ -46,16 +58,16 @@ void SpaceShip::drawShip() {
 		glNewList(*display_list_handle, GL_COMPILE);
 
 
-
+		glTranslated(x, y, z);
 		//draw the main ship
 		glPushMatrix();
 		glColor3d(1, 0, 0);
-		glTranslated(0.0, 0.0, 0.0);
+		glTranslated(0.0, 1.0, 0.0);
 		glScalef(.33f, 1.0f, .33f);
 		gluSphere(q, 1.0, slices, stacks);
+		glTranslated(0, -1.0, 0.0);
 		glPopMatrix();
 
-		glTranslated(0.0, -1.0, 0.0);
 
 		//draw the wings
 		for (int a = 0; a < 4; a++) {
@@ -67,6 +79,7 @@ void SpaceShip::drawShip() {
 			glRotatef(90, 0.0f, 1.0f, 0.0f);
 			glScalef(.33f, 1.0f, 1.0f);
 			gluCylinder(q, .25, .15, .5, slices, stacks);
+			glTranslated(-.1, -.3, 0);
 			glPopMatrix();
 		}
 
@@ -78,6 +91,7 @@ void SpaceShip::drawShip() {
 			glTranslatef(.55, .4, 0.0);
 			glRotatef(90, 1.0f, 0.0f, 0.0f);
 			gluCylinder(q, .1, .1, .5, slices, stacks);
+			glTranslatef(-.55, -.4, 0);
 			glPopMatrix();
 
 			//draw balls on top
@@ -85,6 +99,7 @@ void SpaceShip::drawShip() {
 			glColor3d(0, 0, 1);
 			glTranslatef(.55, .4, 0.0);
 			gluSphere(q, .1, slices, stacks);
+			glTranslatef(-.55, -.4, 0);
 			glPopMatrix();
 
 			//draw the flames
@@ -93,9 +108,11 @@ void SpaceShip::drawShip() {
 			glTranslatef(.55, -.1, 0.0);
 			glScalef(1, 2.5, 1);
 			gluSphere(q, .1, slices, stacks);
+			glTranslatef(-.55, -.1, 0.0);
 			glPopMatrix();
 		}
 		
+		glTranslated(-x, -y, -z);
 		
 		glEndList();
 		gluDeleteQuadric(q);
