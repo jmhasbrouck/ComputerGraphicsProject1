@@ -14,22 +14,22 @@ SpaceShip::~SpaceShip() {
 
 void SpaceShip::drawSquad() {
 
-	double z=-1.5;
-	double x = -1.5;
-	
+	double z = -1.75;
+	double x = -1.75;
+
 	//Here, we will use a for loop to create the array of ships
 	vector<SpaceShip> theSquad;
 	for (int a = 0; a < 4; a++) {
-		x = -1.5;
+		x = -1.75;
 		for (int i = 0; i < 4; i++) {
 			glPushMatrix();
 			glTranslated(x, 0, z);
 			glScaled(.5, .5, .5);
-			drawShip(0,0,0);
+			drawShip(0, 0, 0);
 			glPopMatrix();
-			x++;
+			x += 1.125;
 		}
-		z++;
+		z += 1.125;
 	}
 
 }
