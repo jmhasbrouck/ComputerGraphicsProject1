@@ -75,51 +75,22 @@ void drawAxes()
 	glBegin(GL_LINES);
 	glColor3d(1.0, 0, 0);
 
-	//X axis
+	//X axis - red
 	glVertex3d(0.0, 0.0, 0.0);
 	glVertex3d(1.0, 0.0, 0.0);
 	//REMEMBER, YOU WILL ALWAYS CHANGE THE SCALING OUTSIDE OF THIS FUNCTION, SO FOR THE LOVE OF GOD JUST MAKE IT IN ONE
 	glColor3d(0.0, 1.0, 0.0);
-	//Y AXIS
+	//Y AXIS - blue
 	glVertex3d(0.0, 0.0, 0.0);
 	glVertex3d(0.0, 1.0, 0.0);
 
 	glColor3d(0.0, 0.0, 1.0);
-	//Z AXIS
+	//Z AXIS - green
 	glVertex3d(0.0, 0.0, 0.0);
 	glVertex3d(0.0, 0.0, 1.0);
 	glEnd();
 
 	glLineWidth(1.0);
-}
-
-void drawSquare(double r, double g, double b)
-{
-#ifdef QUADRIC
-	drawAxes();
-	glColor3d(r, g, b);
-	if (display_list_handle == GLuint(-1))
-	{
-
-		GLUquadric * q = gluNewQuadric();
-		display_list_handle = glGenLists(1);
-		glNewList(display_list_handle, GL_COMPILE);
-		//gluSphere(q, 1.0, 100, 100); // parameters : (pointer to memory, radius, slices, stacks)
-		gluCylinder(q, 1.0, 0.5, 1.0, 100, 100);
-		glEndList();
-		gluDeleteQuadric(q);
-	}
-	glCallList(display_list_handle);
-#else
-	glBegin(GL_QUADS);
-	glColor3d(0, 0, 0);
-	glVertex2d(-1, 1);
-	glColor3d(r, g, b);
-	glVertex2d(1, 1);
-	glVertex2d(1, -1);
-	glVertex2d(-1, -1);
-	glEnd();
-#endif
 }
 
 void drawSphere(double r)
@@ -179,7 +150,7 @@ void DisplayFunc()
 	glLoadIdentity();
 	gluLookAt(0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
 	glRotated(*longitude, 1, 0, 0);
-	glRotated(*latitude, 0, 1, 0);
+	glRotated(*latitude + 45, 0, 1, 0);
 	
 	glPushMatrix();
 	glScaled(2,2,2);
@@ -187,7 +158,7 @@ void DisplayFunc()
 	glPopMatrix();
 
 	glPushMatrix();
-	glScaled(1, 1, 1);
+	glScaled(1.25, 1.25, 1.25);
 	myLittleRocketShip.drawSquad();
 	glPopMatrix();
 
@@ -222,12 +193,15 @@ void DisplayFunc_2()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glBegin(GL_QUADS);
 	glPushMatrix();
+	
 	drawSphere(6);
 	glPopMatrix();
 	glEnd();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	glTranslated(0, 0, 7.5);
+	glRotated(45, 0, 1, 0);
+	glScaled(2, 2, 2);
 	myLittleRocketShip.drawSquad();
 	
 	glMatrixMode(GL_PROJECTION);
@@ -243,6 +217,7 @@ void DisplayFunc_2()
 
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glScaled(2, 2, 2);
 	glBegin(GL_QUADS);
 	glPushMatrix();
 	drawSphere(6);
@@ -251,6 +226,8 @@ void DisplayFunc_2()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	glTranslated(-7.5, 0, 0);
+	glScaled(2, 2, 2);
+	glRotated(45, 0, 1, 0);
 	myLittleRocketShip.drawSquad();
 	
 
