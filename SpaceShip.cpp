@@ -15,21 +15,20 @@ SpaceShip::~SpaceShip() {
 void SpaceShip::drawSquad() {
 
 	double z = -1.5;
-	double x = -1.5;
-
+	double x;
 	//Here, we will use a for loop to create the array of ships
 	vector<SpaceShip> theSquad;
 	for (int a = 0; a < 4; a++) {
-		x = -1.75;
+		x = -1.5;
 		for (int i = 0; i < 4; i++) {
 			glPushMatrix();
 			glTranslated(x, 0, z);
 			glScaled(.5, .5, .5);
 			drawShip(0, 0, 0);
 			glPopMatrix();
-			x += 1.125;
+			x += 1;
 		}
-		z += 1.125;
+		z += 1;
 	}
 
 }
@@ -57,7 +56,7 @@ void SpaceShip::drawShip(double x, double y, double z) {
 		*display_list_handle = glGenLists(1);
 		glNewList(*display_list_handle, GL_COMPILE);
 
-
+		glTranslated(0, -1, 0);
 		glTranslated(x, y, z);
 		//draw the main ship
 		glPushMatrix();
