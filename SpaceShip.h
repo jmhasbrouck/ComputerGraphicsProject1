@@ -8,8 +8,8 @@ class SpaceShip {
 public:
 	SpaceShip();
 	~SpaceShip();
-	vector<SpaceShip> drawSquad();
-	void drawShip();
+	void drawSquad();
+	void drawShip(double x, double y, double z);
 	void setSlicesStacks(double numberOf);
 	void colorShip(double r, double g, double b);
 	void setDisplayListBoolean(bool weAreInDisplayFuncOne);

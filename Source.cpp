@@ -184,7 +184,7 @@ void DisplayFunc()
 
 	glPushMatrix();
 	glScaled(1, 1, 1);
-	myLittleRocketShip.drawShip();
+	myLittleRocketShip.drawSquad();
 	glPopMatrix();
 
 	glutSwapBuffers();
@@ -220,7 +220,7 @@ void DisplayFunc_2()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	glTranslated(0, 0, 7.5);
-	myLittleRocketShip.drawShip();
+	myLittleRocketShip.drawSquad();
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -243,7 +243,7 @@ void DisplayFunc_2()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	glTranslated(-7.5, 0, 0);
-	myLittleRocketShip.drawShip();
+	myLittleRocketShip.drawSquad();
 	
 
 	glutSwapBuffers();
