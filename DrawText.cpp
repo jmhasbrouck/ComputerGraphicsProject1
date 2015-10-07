@@ -10,7 +10,7 @@ void DrawTexts::DrawIt(const char *text, int length, int x, int y) {
 	double *matrix = new double[16];
 	glGetDoublev(GL_PROJECTION_MATRIX, matrix);
 	glLoadIdentity();
-	glOrtho(0, 800, 0, 600, -5, 5);
+	gluOrtho2D(0.0, GLUT_WINDOW_WIDTH, 0.0, GLUT_WINDOW_HEIGHT);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glPushMatrix();
