@@ -1,10 +1,13 @@
 #include "GL/freeglut.h"
 #include <iostream>
 #include "SpaceShip.h"
+#include "DrawText.h"
 //#include "FirstPersonPerspective.h"
 
 using namespace std;
+
 SpaceShip myLittleRocketShip;
+DrawTexts instructions;
 int width = 512;
 int height = 512;
 int width2 = 1024;
@@ -20,6 +23,7 @@ double* zoom = new double(45);
 
 void ReshapeFunc(int w, int h)
 {
+	
 	width = w;
 	height = h;
 	glutPostRedisplay();
@@ -185,6 +189,17 @@ void DisplayFunc()
 	glPushMatrix();
 	glScaled(1, 1, 1);
 	myLittleRocketShip.drawSquad();
+	glPopMatrix();
+
+	glPushMatrix();
+	string welcome = "Welcome to Project 1!!";
+	string arrowKeys = "Use the arrow keys to navigate around the graphic.";
+	string zoom = "Use Page UP and Page Down to zoom in or out.";
+	string quit = "Use ESC or X to quit the program.";
+	instructions.DrawIt(welcome.data(), welcome.size(), 0, 70);
+	instructions.DrawIt(arrowKeys.data(), arrowKeys.length(), 0, 50);
+	instructions.DrawIt(zoom.data(), zoom.length(), 0, 30);
+	instructions.DrawIt(quit.data(), arrowKeys.length(), 0, 10);
 	glPopMatrix();
 
 	glutSwapBuffers();
