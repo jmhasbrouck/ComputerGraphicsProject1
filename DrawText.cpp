@@ -26,3 +26,17 @@ void DrawTexts::DrawIt(const char *text, int length, int x, int y) {
 	glLoadMatrixd(matrix);
 	glMatrixMode(GL_MODELVIEW);
 }
+
+void DrawTexts::DrawPanel() {
+	string welcome = "Welcome to Project 1!!";
+	string arrowKeys = "Use the arrow keys to navigate around the graphic.";
+	string zoom = "Use Page UP and Page Down to zoom in or out.";
+	string wireFrame = "Use W to enter and exit wireframe mode.";
+	string quit = "Use ESC or X to quit the program.";
+
+	DrawIt(welcome.data(), welcome.size(), 0, 13);
+	DrawIt(arrowKeys.data(), arrowKeys.length(), 0, 10);
+	DrawIt(wireFrame.data(), wireFrame.length(), 0, 7);
+	DrawIt(zoom.data(), zoom.length(), 0, 4);
+	DrawIt(quit.data(), arrowKeys.length(), 0, 1);
+}
