@@ -3,8 +3,14 @@
 #include "SpaceShip.h"
 #include "DrawText.h"
 #include "DrawCameras.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+using namespace glm;
 
 using namespace std;
+
 DrawCameras camera1;
 DrawCameras camera2;
 SpaceShip myLittleRocketShip;
@@ -18,10 +24,12 @@ GLuint window_1;
 GLuint window_2;
 GLuint display_list_handle;
 GLuint display_list_handle_sphere;
-double* longitude = new double(0.0);
+double* longitude = new double(-45.0);
 double* latitude = new double(0.0);
 double* zoom = new double(45);
-
+//******************************************************8
+vec3 cameraPosition;
+//*********************************************************8888888888
 void ReshapeFunc(int w, int h)
 {	
 	width = w;
@@ -39,22 +47,22 @@ void SpecialFunc(int key, int x, int y)
 	switch (key)
 	{
 	case GLUT_KEY_UP:
-		*longitude += 1.0;
+		*latitude -= 1.0;
 		camera1.CameraUp();
 		camera2.CameraUp();
 		break;
 	case GLUT_KEY_DOWN:
-		*longitude -= 1.0;
+		*latitude += 1.0;
 		camera1.CameraDown();
 		camera2.CameraDown();
 		break;
 	case GLUT_KEY_LEFT:
-		*latitude += 1.0;
+		*longitude -= 1.0;
 		camera1.CameraLeft();
 		camera2.CameraLeft();
 		break;
 	case GLUT_KEY_RIGHT:
-		*latitude -= 1.0;
+		*longitude += 1.0;
 		camera1.CameraRight();
 		camera2.CameraRight();
 		break;
@@ -85,7 +93,14 @@ void SpecialFunc_2(int key, int x, int y)
 {
 	SpecialFunc(key, x, y);
 }
-
+vec3 ComputeCameraPosition()
+{
+	mat4 m;
+	vec4 p(0, 0, 5, 1);
+	m = rotate(m, radians(float(*longitude)), vec3(0.0f,1.0f,0.0f));
+	m = rotate(m, radians(float(*latitude)), vec3(1.0f, 0.0f, 0.0f));
+	return vec3(m*p);
+}
 void drawAxes()
 {
 	glLineWidth(4);
@@ -164,9 +179,9 @@ void DisplayFunc()
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
-	glRotated(*longitude, 1, 0, 0);
-	glRotated(*latitude + 45, 0, 1, 0);
+	cameraPosition = ComputeCameraPosition();
+	gluLookAt(cameraPosition.x, cameraPosition.y, cameraPosition.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
+	
 	
 	glPushMatrix();
 	glScaled(2,2,2);
