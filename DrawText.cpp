@@ -25,6 +25,7 @@ void DrawTexts::DrawIt(const char *text, int length, int x, int y) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(matrix);
 	glMatrixMode(GL_MODELVIEW);
+	delete[] matrix;
 }
 
 void DrawTexts::DrawPanel() {

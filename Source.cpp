@@ -2,7 +2,6 @@
 #include <iostream>
 #include "SpaceShip.h"
 #include "DrawText.h"
-//#include "FirstPersonPerspective.h"
 
 using namespace std;
 
@@ -22,10 +21,15 @@ double* latitude = new double(0.0);
 double* zoom = new double(45);
 
 void ReshapeFunc(int w, int h)
-{
-	
+{	
 	width = w;
 	height = h;
+	glutPostRedisplay();
+}
+void ReshapeFunc_2(int w, int h)
+{
+	width2 = w;
+	height2 = h;
 	glutPostRedisplay();
 }
 void SpecialFunc(int key, int x, int y)
@@ -101,10 +105,11 @@ void drawSphere(double r)
 		GLUquadric * q = gluNewQuadric();
 		display_list_handle = glGenLists(1);
 		glNewList(display_list_handle, GL_COMPILE);
-		gluSphere(q, r, 30, 30); // parameters : (pointer to memory, radius, slices, stacks)
+		gluSphere(q, r, 40, 30); // parameters : (pointer to memory, radius, slices, stacks)
 		glEndList();
 		gluDeleteQuadric(q);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (!wireframe_mode)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	glCallList(display_list_handle);
 }
@@ -126,10 +131,7 @@ void KeyboardFunc(unsigned char c, int x, int y)
 		break;
 	}
 }
-void KeyboardFunc_2(unsigned char c, int x, int y)
-{
-	KeyboardFunc(c, x, y);
-}
+
 void DisplayFunc()
 {
 	//Lets the SpaceShip object know that we are in DisplayFunc
@@ -167,6 +169,10 @@ void DisplayFunc()
 	glPopMatrix();
 
 	glutSwapBuffers();
+
+	glutSetWindow(window_2);
+	glutPostRedisplay();
+
 }
 void DisplayFunc_2()
 {
@@ -195,7 +201,6 @@ void DisplayFunc_2()
 	glPushMatrix();
 	
 	drawSphere(6);
-	glPopMatrix();
 	glEnd();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
@@ -203,6 +208,8 @@ void DisplayFunc_2()
 	glRotated(45, 0, 1, 0);
 	glScaled(2, 2, 2);
 	myLittleRocketShip.drawSquad();
+	
+	//SCREEN TWO ************************************************
 	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -232,6 +239,9 @@ void DisplayFunc_2()
 	
 
 	glutSwapBuffers();
+	
+	glutSetWindow(window_1);
+	glutPostRedisplay();
 }
 void TimerFunc(int period)
 {
@@ -241,8 +251,6 @@ void TimerFunc(int period)
 
 int main(int argc, char * argv[])
 {
-	
-
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	//FirstPersonPerspective * fp =  new FirstPersonPerspective(height, width, latitude, longitude, zoom);
@@ -262,9 +270,9 @@ int main(int argc, char * argv[])
 	glutInitWindowSize(width2, height2);
 	window_2 = glutCreateWindow("Third Person");
 	glutDisplayFunc(DisplayFunc_2);
-	glutKeyboardFunc(KeyboardFunc_2);
-	glutSpecialFunc(SpecialFunc_2);
-	//glutReshapeFunc(ReshapeFunc_2);
+	glutKeyboardFunc(KeyboardFunc);
+	glutSpecialFunc(SpecialFunc);
+	glutReshapeFunc(ReshapeFunc_2);
 	glutTimerFunc(1000 / 60, TimerFunc, 1000 / 60);
 
 	glutMainLoop();
@@ -276,33 +284,3 @@ int main(int argc, char * argv[])
 	delete longitude;
 	delete zoom;
 }
-
-/*
-how to do pointer to a function example
-*********************************
-this goes in main
-
-void (* function_ptr)(int) = Foo;
-
-PrintingFunction(Foo, 8);
-PrintingFunction(Fee, 9);
-cout << "Enter to continue . . . ";
-char b;
-cin >> b;
-****************************************
-functions
-
-void Foo(int argument)
-{
-cout << "Here's your argument: " << argument << endl;
-}
-
-void PrintingFunction(void (* function_ptr)(int), int argument)
-{
-function_ptr(argument);
-}
-
-void Fee(int argument)
-{
-cout << "Your argument this is: " << argument << endl;
-}*/
