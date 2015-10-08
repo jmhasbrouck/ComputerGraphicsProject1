@@ -2,12 +2,16 @@
 #include <iostream>
 #include "SpaceShip.h"
 #include "DrawText.h"
+#include "DrawCameras.h"
 //#include "FirstPersonPerspective.h"
 
 using namespace std;
 
 SpaceShip myLittleRocketShip;
 DrawTexts instructions;
+DrawCameras camera1;
+DrawCameras camera2;
+
 int width = 512;
 int height = 512;
 int width2 = 1024;
@@ -34,21 +38,33 @@ void SpecialFunc(int key, int x, int y)
 	{
 	case GLUT_KEY_UP:
 		*longitude += 1.0;
+		camera1.CameraUp();
+		camera2.CameraUp();
 		break;
 	case GLUT_KEY_DOWN:
 		*longitude -= 1.0;
+		camera1.CameraDown();
+		camera2.CameraDown();
 		break;
 	case GLUT_KEY_LEFT:
 		*latitude += 1.0;
+		camera1.CameraLeft();
+		camera2.CameraLeft();
 		break;
 	case GLUT_KEY_RIGHT:
 		*latitude -= 1.0;
+		camera1.CameraRight();
+		camera2.CameraRight();
 		break;
 	case GLUT_KEY_PAGE_UP:
 		*zoom -= 0.5;
+		camera1.CameraZoomIn();
+		camera2.CameraZoomOut();
 		break;
 	case GLUT_KEY_PAGE_DOWN:
 		*zoom += 0.5;
+		camera1.CameraZoomOut();
+		camera2.CameraZoomOut();
 		break;
 	default:
 		break;
@@ -252,6 +268,8 @@ void DisplayFunc_2()
 	
 	glTranslated(-7.5, 0, 0);
 	myLittleRocketShip.drawSquad();
+
+	
 	
 
 	glutSwapBuffers();
