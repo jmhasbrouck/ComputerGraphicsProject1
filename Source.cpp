@@ -24,12 +24,17 @@ GLuint window_1;
 GLuint window_2;
 GLuint display_list_handle;
 GLuint display_list_handle_sphere;
-double* longitude = new double(-45.0);
-double* latitude = new double(0.0);
-double* zoom = new double(45);
-//******************************************************8
+double* longitude = new double(-45.0);//rotation angle for camera
+double* latitude = new double(0.0);//rotation angle for camera
+double* zoom = new double(45);//angle of zoom
+double farPlane = 5;
+double nearPlane = .5;
+double radius = ((farPlane + nearPlane)/2) + nearPlane;//calculation for the radius
+
+//******************************************************
 vec3 cameraPosition;
-//*********************************************************8888888888
+//******************************************************
+
 void ReshapeFunc(int w, int h)
 {	
 	width = w;
@@ -88,19 +93,25 @@ void SpecialFunc(int key, int x, int y)
 	{
 		*zoom = 89.5;
 	}
+	if (*latitude == -90)
+	{
+		*latitude = -89;
+	}
+	if (*latitude == 90)
+	{
+		*latitude = 89;
+	}
 }
-void SpecialFunc_2(int key, int x, int y)
-{
-	SpecialFunc(key, x, y);
-}
+//Function that returns camera position. Used in DisplayFunc
 vec3 ComputeCameraPosition()
 {
 	mat4 m;
-	vec4 p(0, 0, 5, 1);
+	vec4 p(0, 0, radius, 1);
 	m = rotate(m, radians(float(*longitude)), vec3(0.0f,1.0f,0.0f));
 	m = rotate(m, radians(float(*latitude)), vec3(1.0f, 0.0f, 0.0f));
 	return vec3(m*p);
 }
+
 void drawAxes()
 {
 	glLineWidth(4);
@@ -126,21 +137,12 @@ void drawAxes()
 	glLineWidth(1.0);
 }
 
-void drawSphere(double r)
+void drawSphere()
 {
-	if (display_list_handle_sphere == GLuint(-1))
-	{
-		glColor3d(0.5f, 0.5f, 0.5f);
-		GLUquadric * q = gluNewQuadric();
-		display_list_handle = glGenLists(1);
-		glNewList(display_list_handle, GL_COMPILE);
-		gluSphere(q, r, 40, 30); // parameters : (pointer to memory, radius, slices, stacks)
-		glEndList();
-		gluDeleteQuadric(q);
-		if (!wireframe_mode)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	glCallList(display_list_handle);
+	
+	glColor3d(0.5f, 0.5f, 0.5f);
+	glutWireSphere(radius, 40, 35); // parameters : (pointer to memory, radius, slices, stacks)
+	
 }
 
 void KeyboardFunc(unsigned char c, int x, int y)
@@ -153,7 +155,6 @@ void KeyboardFunc(unsigned char c, int x, int y)
 		break;
 
 	case 'w':
-		glPolygonMode(GL_FRONT_AND_BACK, wireframe_mode ? GL_LINE : GL_FILL);
 		wireframe_mode = !wireframe_mode;
 		break;
 	default:
@@ -172,8 +173,8 @@ void DisplayFunc()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//MAKE SURE IT IS BIT AND not GL_COLOR_BUFFER
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(*zoom, width / double(height), 1.0, 10.0);
-	glViewport(0.0, 0.0, width, height);
+	gluPerspective(*zoom, width / double(height), nearPlane, farPlane);
+	glViewport(GLint(0), GLint(0), GLsizei(width), GLsizei(height));
 
 
 	glEnable(GL_DEPTH_TEST);
@@ -181,7 +182,8 @@ void DisplayFunc()
 	glLoadIdentity();
 	cameraPosition = ComputeCameraPosition();
 	gluLookAt(cameraPosition.x, cameraPosition.y, cameraPosition.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
-	
+
+	glPolygonMode(GL_FRONT_AND_BACK, wireframe_mode ? GL_LINE : GL_FILL);
 	
 	glPushMatrix();
 	glScaled(2,2,2);
@@ -189,7 +191,7 @@ void DisplayFunc()
 	glPopMatrix();
 
 	glPushMatrix();
-	glScaled(1.25, 1.25, 1.25);
+	glScaled(1, 1, 1);
 	myLittleRocketShip.drawSquad();
 	glPopMatrix();
 
@@ -203,39 +205,39 @@ void DisplayFunc()
 	glutPostRedisplay();
 
 }
+
 void DisplayFunc_2()
 {
 	//Lets the SpaceShip object know that we are in DisplayFunc_2
 	myLittleRocketShip.setDisplayListBoolean(false);
 	int elapsed_time = glutGet(GLUT_ELAPSED_TIME);
-
+	
 	//GLReturnedError("Entering DisplayFunc");
 	glClearColor(0.0, 0.0, 0.0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//MAKE SURE IT IS BIT AND not GL_COLOR_BUFFER
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-5, 5, -5, 5.0f, 0.0f, 10.0f);
-	glViewport(0.0, 0.0, width2/2.0, height);
-
+	glOrtho(-5, 5, -5, 5.0f, 0.0f, 20.0f);
+	glViewport(GLint(0), GLint(0), GLsizei(width2/2.0), GLsizei(height));
 	glEnable(GL_DEPTH_TEST);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
-	gluLookAt(0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
-	glScaled(.5, .5, .5);
-	
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glBegin(GL_QUADS);
-	glPushMatrix();
-	
-	drawSphere(6);
-	glEnd();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
-	glTranslated(0, 0, 7.5);
+	glTranslated(0, 0, -1);
+	gluLookAt(0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
+	drawSphere();
+	//
+	/*We draw our camera before we do anything else because the transformations
+	that we make to draw the rockets will effect where the camera is drawn.
+	In short, drawing camera before rockets will make things easier*/
+	glTranslated(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glutSolidSphere(.1, 20, 20);
+	glTranslated(-1 * cameraPosition.x, -1 * cameraPosition.y, -1 * cameraPosition.z);
+	//In line above we reset the transformation to (0,0,0) 
+	glPolygonMode(GL_FRONT_AND_BACK, wireframe_mode ? GL_LINE : GL_FILL);
+	glTranslated(0, 0, radius);
 	glRotated(45, 0, 1, 0);
-	glScaled(2, 2, 2);
+	glScaled(1, 1, 1);
 	myLittleRocketShip.drawSquad();
 	
 	//SCREEN TWO ************************************************
@@ -243,35 +245,38 @@ void DisplayFunc_2()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-5, 5, -5, 5.0f, 0.0f, 10.0f);
-	glViewport(width2 / 2.0, 0.0, width2 / 2.0, height);
+	glViewport(GLint(width2 / 2.0), GLint(0.0), GLsizei(width2 / 2.0), GLsizei(height));
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(0.0, 0.0, 4.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0);
-	glScaled(.5, .5, .5);
-	glRotated(90, 0, 1, 0);
+	//glScaled(.5, .5, .5);
 
+	glRotated(90, 0, 1, 0);
+	glTranslated(1, 0, 0);
 	
+	glTranslated(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glutSolidSphere(.1, 20, 20);
+	glTranslated(-1 * cameraPosition.x, -1 * cameraPosition.y, -1 * cameraPosition.z);
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	//glScaled(2, 2, 2);
-	glBegin(GL_QUADS);
-	glPushMatrix();
-	drawSphere(6);
-	glPopMatrix();
-	glEnd();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
-	glTranslated(-7.5, 0, 0);
-	glScaled(2, 2, 2);
+	drawSphere();
+
+	glPolygonMode(GL_FRONT_AND_BACK, wireframe_mode ? GL_LINE : GL_FILL);
+	
+	glTranslated(-1 * radius, 0, 0);
+	//glScaled(2, 2, 2);
 	glRotated(45, 0, 1, 0);
 	myLittleRocketShip.drawSquad();
-	
+	glTranslated(radius, 0, 0);
 
 	glutSwapBuffers();
 	
 	glutSetWindow(window_1);
 	glutPostRedisplay();
 }
+
 void TimerFunc(int period)
 {
 	glutTimerFunc(period, TimerFunc, period);
@@ -283,7 +288,7 @@ int main(int argc, char * argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	//FirstPersonPerspective * fp =  new FirstPersonPerspective(height, width, latitude, longitude, zoom);
-	wireframe_mode = true;
+	wireframe_mode = false;
 	display_list_handle = GLuint(-1);
 	display_list_handle_sphere = GLuint(-1);
 	glutInitWindowPosition(0, 0);
