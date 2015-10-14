@@ -12,17 +12,26 @@ SpaceShip::~SpaceShip() {
 	delete[] displayLists;
 }
 
-void SpaceShip::drawSquad() {
+void SpaceShip::drawSquad(bool isLaunch) {
 
 	double z = -1.5;
 	double x;
+	if (isLaunch) {
+		y = y+.025;
+		//drawSmoke();
+	}
+	else
+	{
+		y = 0;
+	}
+
 	//Here, we will use a for loop to create the array of ships
 	vector<SpaceShip> theSquad;
 	for (int a = 0; a < 4; a++) {
 		x = -1.5;
 		for (int i = 0; i < 4; i++) {
 			glPushMatrix();
-			glTranslated(x, 0, z);
+			glTranslated(x, y, z);
 			glScaled(.5, .5, .5);
 			drawShip(0, 0, 0);
 			glPopMatrix();
@@ -58,13 +67,12 @@ void SpaceShip::drawShip(double x, double y, double z) {
 
 		glTranslated(0, -1, 0);
 		glTranslated(x, y, z);
+
 		//draw the main ship
 		glPushMatrix();
-		glColor3d(1, 0, 0);
 		glTranslated(0.0, 1.0, 0.0);
 		glScalef(.33f, 1.0f, .33f);
 		gluSphere(q, 1.0, slices, stacks);
-		glTranslated(0, -1.0, 0.0);
 		glPopMatrix();
 
 
@@ -72,13 +80,11 @@ void SpaceShip::drawShip(double x, double y, double z) {
 		for (int a = 0; a < 4; a++) {
 			glRotatef(90, 0, 1, 0);
 			glPushMatrix();
-			glColor3d(1, 0, 1);
 			glTranslated(0.1, 0.3, 0.0);
 			glRotatef(20, 0.0f, 0.0f, -1.0f);
 			glRotatef(90, 0.0f, 1.0f, 0.0f);
 			glScalef(.33f, 1.0f, 1.0f);
 			gluCylinder(q, .25, .15, .5, slices, stacks);
-			glTranslated(-.1, -.3, 0);
 			glPopMatrix();
 		}
 
@@ -86,28 +92,22 @@ void SpaceShip::drawShip(double x, double y, double z) {
 			//draw the thrusters
 			glRotatef(90, 0, 1, 0);
 			glPushMatrix();
-			glColor3d(1, 1, 0);
 			glTranslatef(.55, .4, 0.0);
 			glRotatef(90, 1.0f, 0.0f, 0.0f);
 			gluCylinder(q, .1, .1, .5, slices, stacks);
-			glTranslatef(-.55, -.4, 0);
 			glPopMatrix();
 
 			//draw balls on top
 			glPushMatrix();
-			glColor3d(0, 0, 1);
 			glTranslatef(.55, .4, 0.0);
 			gluSphere(q, .1, slices, stacks);
-			glTranslatef(-.55, -.4, 0);
 			glPopMatrix();
 
 			//draw the flames
 			glPushMatrix();
-			glColor3d(0, 1, 0);
 			glTranslatef(.55, -.1, 0.0);
 			glScalef(1, 2.5, 1);
 			gluSphere(q, .1, slices, stacks);
-			glTranslatef(-.55, -.1, 0.0);
 			glPopMatrix();
 		}
 		
@@ -125,11 +125,23 @@ void SpaceShip::setSlicesStacks(double numberOf) {
 	stacks = slices = numberOf;
 }
 
-void SpaceShip::colorShip(double r, double g, double b) {
-
-}
-
 void SpaceShip::setDisplayListBoolean(bool weAreInDisplayFuncOne)
 {
 	weAreInDisplayFuncNumberOne = weAreInDisplayFuncOne;
+}
+
+void SpaceShip::drawSmoke() {
+	
+	int randNum = rand() % 100-200;
+	double randX = rand() % 1-4;
+	double randZ = rand() % 1-4;
+	cout << randX << "   " << randZ << "   " << randNum << "   ";
+	for (int i = 0; i < abs(randNum); i++) {
+		glPushMatrix();
+		glColor3d(0, 1, 0);
+		glTranslatef(abs(randX), 0, abs(randZ));
+		glScalef(1, 2.5, 1);
+		gluSphere(q, .1, slices, stacks);
+		glPopMatrix();
+	}
 }

@@ -11,8 +11,8 @@ using namespace glm;
 
 using namespace std;
 
-DrawCameras camera1;
-DrawCameras camera2;
+//DrawCameras camera1;
+//DrawCameras camera2;
 SpaceShip myLittleRocketShip;
 DrawTexts instructions;
 int width = 512;
@@ -20,6 +20,8 @@ int height = 512;
 int width2 = 1024;
 int height2 = 512;
 bool wireframe_mode;
+bool rapid_fire, is_launch = false;
+double red, green, blue = 100.5;
 GLuint window_1;
 GLuint window_2;
 GLuint display_list_handle;
@@ -53,33 +55,21 @@ void SpecialFunc(int key, int x, int y)
 	{
 	case GLUT_KEY_UP:
 		*latitude -= 1.0;
-		camera1.CameraUp();
-		camera2.CameraUp();
 		break;
 	case GLUT_KEY_DOWN:
 		*latitude += 1.0;
-		camera1.CameraDown();
-		camera2.CameraDown();
 		break;
 	case GLUT_KEY_LEFT:
 		*longitude -= 1.0;
-		camera1.CameraLeft();
-		camera2.CameraLeft();
 		break;
 	case GLUT_KEY_RIGHT:
 		*longitude += 1.0;
-		camera1.CameraRight();
-		camera2.CameraRight();
 		break;
 	case GLUT_KEY_PAGE_UP:
 		*zoom -= 0.5;
-		camera1.CameraZoomIn();
-		camera2.CameraZoomOut();
 		break;
 	case GLUT_KEY_PAGE_DOWN:
 		*zoom += 0.5;
-		camera1.CameraZoomOut();
-		camera2.CameraZoomOut();
 		break;
 	default:
 		break;
@@ -145,6 +135,18 @@ void drawSphere()
 	
 }
 
+void changetheColor() {
+	double randNum;
+
+	randNum = (rand() % 255 - 1) / 255.0f;
+	red = randNum;
+	randNum = (rand() % 255 - 1) / 255.0f;
+	blue = randNum;
+	randNum = (rand() % 255 - 1) / 255.0f;
+	green = randNum;
+
+}
+
 void KeyboardFunc(unsigned char c, int x, int y)
 {
 	switch (c)
@@ -153,10 +155,27 @@ void KeyboardFunc(unsigned char c, int x, int y)
 	case 'x':
 		glutLeaveMainLoop();
 		break;
-
 	case 'w':
 		wireframe_mode = !wireframe_mode;
 		break;
+	case 'c':
+		changetheColor();
+		break;
+	case 'r':
+		if (rapid_fire) {
+			rapid_fire = false;
+		}
+		else {
+			rapid_fire = true;
+		}
+		break;
+	case 'l':
+		if (is_launch) {
+			is_launch = false;
+		}
+		else {
+			is_launch = true;
+		}
 	default:
 		break;
 	}
@@ -164,6 +183,9 @@ void KeyboardFunc(unsigned char c, int x, int y)
 
 void DisplayFunc()
 {
+	if (rapid_fire) {
+		changetheColor();
+	}
 	//Lets the SpaceShip object know that we are in DisplayFunc
 	myLittleRocketShip.setDisplayListBoolean(true);
 	int elapsed_time = glutGet(GLUT_ELAPSED_TIME);
@@ -192,10 +214,12 @@ void DisplayFunc()
 
 	glPushMatrix();
 	glScaled(1, 1, 1);
-	myLittleRocketShip.drawSquad();
+	glColor3d(red,green,blue);
+	myLittleRocketShip.drawSquad(is_launch);
 	glPopMatrix();
 
 	glPushMatrix();
+	glColor3d(0, 1, 0);
 	instructions.DrawPanel();
 	glPopMatrix();
 
@@ -208,6 +232,10 @@ void DisplayFunc()
 
 void DisplayFunc_2()
 {
+	if (rapid_fire) {
+		changetheColor();
+	}
+
 	//Lets the SpaceShip object know that we are in DisplayFunc_2
 	myLittleRocketShip.setDisplayListBoolean(false);
 	int elapsed_time = glutGet(GLUT_ELAPSED_TIME);
@@ -238,7 +266,8 @@ void DisplayFunc_2()
 	glTranslated(0, 0, radius);
 	glRotated(45, 0, 1, 0);
 	glScaled(1, 1, 1);
-	myLittleRocketShip.drawSquad();
+	glColor3d(red, green, blue);
+	myLittleRocketShip.drawSquad(is_launch);
 	
 	//SCREEN TWO ************************************************
 	
@@ -268,7 +297,8 @@ void DisplayFunc_2()
 	glTranslated(-1 * radius, 0, 0);
 	//glScaled(2, 2, 2);
 	glRotated(45, 0, 1, 0);
-	myLittleRocketShip.drawSquad();
+	glColor3d(red, green, blue);
+	myLittleRocketShip.drawSquad(is_launch);
 	glTranslated(radius, 0, 0);
 
 	glutSwapBuffers();
